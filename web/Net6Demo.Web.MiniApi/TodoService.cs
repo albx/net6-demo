@@ -21,11 +21,13 @@ namespace Net6Demo.Web.MiniApi
         public Task CompleteTodo(int todoId)
         {
             var item = _todos.FirstOrDefault(t => t.Id == todoId);
+            if (item == null) throw new ApplicationException();
+
             item.Completed = true;
 
             return Task.CompletedTask;
         }
 
-        public TodoItem GetTodoDetail(int todoId) => _todos.FirstOrDefault(t => t.Id == todoId);
+        public TodoItem? GetTodoDetail(int todoId) => _todos.FirstOrDefault(t => t.Id == todoId);
     }
 }
