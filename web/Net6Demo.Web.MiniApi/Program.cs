@@ -5,6 +5,8 @@ using Net6Demo.Web.MiniApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<TodoService>();
 
 await using var app = builder.Build();
@@ -14,41 +16,24 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-app.MapGet(
-    "/todos", 
-    (TodoService services) =>
-    {
-        var todos = services.GetItems();
-        return Results.Ok(todos);
-    });
+app.UseSwagger();
 
-app.MapGet(
-    "/todos/{id}",
-    (TodoService service, int id) =>
-    {
-        if (id <= 0)
-        {
-            return Results.BadRequest("Invalid id");
-        }
+app.MapGet("/todos", TodoEndpoints.GetAllTodos)
+    .WithName("GetTodos")
+    .WithGroupName("v1");
 
-        var todo = service.GetTodoDetail(id);
-        if (todo == null) return Results.NotFound();
-
-        return Results.Ok(todo);
-    });
+app.MapGet("/todos/{id}", TodoEndpoints.GetTodoDetail)
+    .WithName("GetTodoDetail")
+    .WithGroupName("v1");
 
 app.MapPost(
     "/todos",
     async (TodoService service, TodoItem todo) =>
     {
-        if (string.IsNullOrWhiteSpace(todo.Title))
-        {
-            return Results.BadRequest("Invalid data");
-        }
-
         await service.CreateNewTodo(todo);
         return Results.Created($"/todos/{todo.Id}", todo);
-    }).RequireAuthorization();
+    })
+    .ProducesValidationProblem();
 
 app.MapPut(
     "/todos/{id}",
@@ -63,4 +48,5 @@ app.MapPut(
         return Results.NoContent();
     });
 
+app.UseSwaggerUI();
 await app.RunAsync();

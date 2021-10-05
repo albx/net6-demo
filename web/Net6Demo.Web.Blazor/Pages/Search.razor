@@ -1,4 +1,5 @@
 ﻿@page "/search"
+@inject NavigationManager Navigation
 
 <PageTitle>My Search</PageTitle>
 <HeadContent>
@@ -30,6 +31,9 @@
 				}
 			</InputSelect>
 		</div>
+		<div>
+			<button type="button" class="btn btn-primary" @onclick="OnSearch">Search</button>
+		</div>
 	</EditForm>
 </div>
 
@@ -44,6 +48,16 @@
 	[Parameter]
 	[SupplyParameterFromQuery]
 	public int Page{ get; set; }
+
+	void OnSearch()
+	{
+		var newUri = Navigation.GetUriWithQueryParameters(new Dictionary<string, object>
+		{
+			{ nameof(Text), "ciao dal metodo" },
+			{ nameof(Page), 5 }
+		});
+		Navigation.NavigateTo(newUri);
+	}
 
 	Model model = new();
 
