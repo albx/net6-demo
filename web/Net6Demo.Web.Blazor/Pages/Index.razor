@@ -1,7 +1,27 @@
 ﻿@page "/"
+<PageTitle>My index</PageTitle>
+<HeadContent>
+	<meta name="description" content="My awesome index page" />
+</HeadContent>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+<Search Text="Home" Page="20" />
+
+<DynamicComponent Type="typeof(Counter)" @ref="counter"></DynamicComponent>
+<button @onclick="GetType">Get type</button>
+
+<p>@componentType</p>
+
+@code {
+	DynamicComponent counter;
+	string componentType;
+
+	void GetType()
+	{
+		componentType = counter.Instance.GetType().ToString();
+	}
+}

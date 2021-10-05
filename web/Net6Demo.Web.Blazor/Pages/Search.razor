@@ -1,0 +1,58 @@
+﻿@page "/search"
+
+<PageTitle>My Search</PageTitle>
+<HeadContent>
+	<meta name="description" content="Search - @Text - @Page" />
+</HeadContent>
+
+<h3>Search</h3>
+
+<div>
+	<p>Text: @Text</p>
+	<p>Page: @Page</p>
+</div>
+
+<div>
+	<EditForm Model="model">
+		<div>
+			<InputSelect @bind-Value="model.TextArray">
+				@foreach (var text in AvailableText)
+				{
+					<option value="@text">@text</option>
+				}
+			</InputSelect>
+		</div>
+		<div>
+			<InputSelect @bind-Value="model.Text">
+				@foreach (var text in AvailableText)
+				{
+					<option value="@text">@text</option>
+				}
+			</InputSelect>
+		</div>
+	</EditForm>
+</div>
+
+<p>@model.Text</p>
+<p>@model.TextArray</p>
+
+@code {
+	[Parameter]
+	[SupplyParameterFromQuery]
+	public string Text { get; set; }
+
+	[Parameter]
+	[SupplyParameterFromQuery]
+	public int Page{ get; set; }
+
+	Model model = new();
+
+	class Model
+	{
+		public string Text { get; set; }
+
+		public string[] TextArray { get; set; } = Array.Empty<string>();
+	}
+
+	public string[] AvailableText { get; set; } = new[] { "Ciao", "Prova", "Etc" };
+}
